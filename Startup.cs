@@ -1,45 +1,41 @@
 using Microsoft.EntityFrameworkCore;
 using delivery.Models;
 using Microsoft.AspNetCore.Http.Features;
-using MongoDB.Driver;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
+using delivery.Helpers;
+
 
 
 namespace delivery
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {   
             services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(jwtOptions =>
-{
-    var configKey = "jwtOptionsSection[Key]";
-    var key = Encoding.UTF8.GetBytes(configKey);
-    jwtOptions.RequireHttpsMetadata = false;
-    jwtOptions.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateLifetime = false,
-        ValidateIssuerSigningKey = true
-    };
-});
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    IssuerSigningKey = AuthHelper.GetKey(),
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true
+                };
+            });
 
             services.AddAuthorization();
 

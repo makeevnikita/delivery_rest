@@ -8360,3 +8360,51 @@ Class: delivery.ExceptionHandlerMiddleware
 Path: /product/get/14
 Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
 Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /favicon.ico
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Class: delivery.ExceptionHandlerMiddleware
+Path: /login
+Execution speed: stopWatch.Elapsed.Seconds:stopWatch.Elapsed.Milliseconds
