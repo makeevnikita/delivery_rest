@@ -113,7 +113,7 @@ public class AdminProductCategoryController : ControllerBase
         category.ImagePath = categoryDto.ImagePath;
 
         await _context.Products.Where(w => categoryDto.DeletedProductsId.Contains(w.Id))
-            .ExecuteUpdateAsync(s=>s.SetProperty(u=>u.CategoryId, u=> null));
+            .ExecuteUpdateAsync(s=>s.SetProperty(u=>u.Category, u=> null));
 
         await _context.Products.Where(w => categoryDto.AddedProductsId.Contains(w.Id))
             .ExecuteUpdateAsync(s=>s.SetProperty(u=>u.CategoryId, u=> category.Id));

@@ -3,12 +3,6 @@ using System.Text.Json;
 using System.Text.Encodings.Web;
 using delivery.DataTransferObjects;
 using delivery.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -37,36 +31,6 @@ public class OrderController : ControllerBase
             ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
         };
     }
-
-    [HttpGet("get")]
-/*     public string Get([FromQuery] string username)
-    {   
-        var configKey = "jwtOptionsSection[Key]";
-        var key = Encoding.UTF8.GetBytes(configKey);
-
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "Admin")
-        };
-
-        var jwt = new JwtSecurityToken(
-            issuer: null,
-            audience: null,
-            claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256
-            )
-        );
-
-        var token = new JwtSecurityTokenHandler().WriteToken(jwt);
-        var handler = new JwtSecurityTokenHandler();
-        var jwtSecurityToken = handler.ReadJwtToken(token);
-
-        // return new JsonResult(jwt, serializerOptions);
-        return new JwtSecurityTokenHandler().WriteToken(jwt);
-    } */
 
     // [Authorize(Roles = "Admin")]
     [HttpPost("create")]
@@ -101,7 +65,7 @@ public class OrderController : ControllerBase
                         House = orderDto.Delivery.House,
                         Entrance = orderDto.Delivery.Entrance,
                         Apartment = orderDto.Delivery.Apartment,
-                        OrderId = order.Id
+                        OrderInfo = order
                     };
                     _context.OrderDeliveries.Add(delivery);
 
