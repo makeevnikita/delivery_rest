@@ -72,6 +72,8 @@ public class PaymentMethod
     public int Id { get; set; }
 
     public string Name { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
 
 public class DeliveryMethod
@@ -79,6 +81,8 @@ public class DeliveryMethod
     public int Id { get; set; }
 
     public string Name { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
 
 public class Order
@@ -210,7 +214,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(w => w.IsActive).IsRequired();
         builder.Property(w => w.Name).HasColumnType("varchar(100)").IsRequired();
-        builder.Property(w => w.Price).HasColumnName("numeric(6,2)").IsRequired();
+        builder.Property(w => w.Price).HasColumnType("numeric(6,2)").IsRequired();
         builder.Property(w => w.ImagePath).IsRequired();
         builder.Property(w => w.Description).HasColumnType("text");
         
@@ -253,5 +257,119 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(w => w.OrderDelivery)
             .WithOne(w => w.OrderInfo)
             .HasForeignKey<OrderDelivery>(w => w.OrderInfoId);
+
+        builder.HasMany(w => w.OrderItems)
+            .WithOne(w => w.Order)
+            .HasForeignKey(w => w.OrderId);
+    }
+}
+
+public class ProductCategoryConfiguration : IEntityTypeConfiguration<ProductCategory>
+{
+    public void Configure(EntityTypeBuilder<ProductCategory> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.ImagePath)
+            .IsRequired();
+
+        builder.Property(w => w.Name)
+            .HasColumnType("varchar(100)")
+            .IsRequired();
+
+        builder.HasMany(w => w.Products)
+            .WithOne(w => w.Category)
+            .HasForeignKey(w => w.CategoryId);
+    }
+}
+
+public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
+{
+    public void Configure(EntityTypeBuilder<Customer> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.Name)
+            .HasColumnType("varchar(100)")
+            .IsRequired();
+
+        builder.Property(w => w.Phone)
+            .HasColumnType("varchar(11)");
+
+        builder.HasMany(w => w.Orders)
+            .WithOne(w => w.Customer)
+            .HasForeignKey(w => w.CustomerId);
+    }
+}
+
+public class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod>
+{
+    public void Configure(EntityTypeBuilder<PaymentMethod> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.Name)
+            .HasColumnType("varchar(100)")
+            .IsRequired();
+
+        builder.HasMany(w => w.Orders)
+            .WithOne(w => w.PaymentMethod)
+            .HasForeignKey(w => w.PaymentMethodId);
+    }
+}
+
+public class DeliveryMethodConfiguration : IEntityTypeConfiguration<DeliveryMethod>
+{
+    public void Configure(EntityTypeBuilder<DeliveryMethod> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.Name)
+            .HasColumnType("varchar(100)")
+            .IsRequired();
+
+        builder.HasMany(w => w.Orders)
+            .WithOne(w => w.DeliveryMethod)
+            .HasForeignKey(w => w.DeliveryMethodId);
+    }
+}
+
+public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
+{
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.OrderId)
+            .IsRequired();
+        
+        builder.Property(w => w.ProductId)
+            .IsRequired();
+
+        builder.HasOne(w => w.Product)
+            .WithMany(w => w.OrderItems);
+        
+        builder.HasOne(w => w.Order)
+            .WithMany(w => w.OrderItems);
+    
+        builder.HasMany(w => w.Modificators)
+            .WithOne(w => w.OrderItem)
+            .HasForeignKey(w => w.OrderItemId);
+    }
+}
+
+public class OrderStatusConfiguration : IEntityTypeConfiguration<OrderStatus>
+{
+    public void Configure(EntityTypeBuilder<OrderStatus> builder)
+    {
+        builder.HasKey(w => w.Id);
+
+        builder.Property(w => w.Name)
+            .HasColumnType("varchar(100)")
+            .IsRequired();
+
+        builder.HasMany(w => w.Orders)
+            .WithOne(w => w.Status)
+            .HasForeignKey(w => w.StatusId);
     }
 }
