@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using delivery.Models.Configurations;
 
 
 
@@ -72,6 +72,8 @@ public class PaymentMethod
     public int Id { get; set; }
 
     public string Name { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
 
 public class DeliveryMethod
@@ -79,6 +81,8 @@ public class DeliveryMethod
     public int Id { get; set; }
 
     public string Name { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
 
 public class Order
@@ -195,63 +199,15 @@ public class DeliveryContext : DbContext
      
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<Product>().Property(p => p.CategoryId).IsRequired(false);
-
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
-    }
-}
-
-public class ProductConfiguration : IEntityTypeConfiguration<Product>
-{
-    public void Configure(EntityTypeBuilder<Product> builder)
-    {
-        builder.HasKey(w => w.Id);
-
-        builder.Property(w => w.IsActive).IsRequired();
-        builder.Property(w => w.Name).HasColumnType("varchar(100)").IsRequired();
-        builder.Property(w => w.Price).HasColumnName("numeric(6,2)").IsRequired();
-        builder.Property(w => w.ImagePath).IsRequired();
-        builder.Property(w => w.Description).HasColumnType("text");
-        
-        builder.HasOne(w => w.Category)
-            .WithMany(w => w.Products)
-            .HasForeignKey(w => w.CategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
-    }
-}
-
-public class OrderConfiguration : IEntityTypeConfiguration<Order>
-{
-    public void Configure(EntityTypeBuilder<Order> builder)
-    {
-        builder.HasKey(w => w.Id);
-        
-        builder.Property(w => w.CustomerId)
-            .IsRequired();
-
-        builder.Property(w => w.PaymentMethodId)
-            .IsRequired();
-
-        builder.Property(w => w.DeliveryMethodId)
-            .IsRequired();
-
-        builder.Property(w => w.DateTimeCreation)
-            .HasColumnType("timestamp")
-            .IsRequired();
-
-        builder.Property(w => w.DeliveryDate)
-            .HasColumnType("timestamp")
-            .IsRequired();
-
-        builder.Property(w => w.Comment)
-            .HasColumnType("varchar(400)");
-
-        builder.Property(w => w.StatusId)
-            .IsRequired();
-
-        builder.HasOne(w => w.OrderDelivery)
-            .WithOne(w => w.OrderInfo)
-            .HasForeignKey<OrderDelivery>(w => w.OrderInfoId);
+        modelBuilder.ApplyConfiguration(new ProductCategoryConfiguration());
+        modelBuilder.ApplyConfiguration(new CustomerConfiguration());
+        modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
+        modelBuilder.ApplyConfiguration(new DeliveryMethodConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderModificatorConfiguration());
     }
 }

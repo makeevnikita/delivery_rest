@@ -32,11 +32,11 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(11)");
 
                     b.HasKey("Id");
 
@@ -53,7 +53,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -225,7 +225,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -242,7 +242,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -276,8 +276,7 @@ namespace delivery.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
-                        .HasColumnName("numeric(6, 2)");
+                        .HasColumnType("numeric(6,2)");
 
                     b.HasKey("Id");
 
@@ -300,7 +299,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -327,13 +326,13 @@ namespace delivery.Migrations
                         .IsRequired();
 
                     b.HasOne("delivery.Models.DeliveryMethod", "DeliveryMethod")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("DeliveryMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("delivery.Models.PaymentMethod", "PaymentMethod")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -418,6 +417,11 @@ namespace delivery.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("delivery.Models.DeliveryMethod", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("delivery.Models.Modificator", b =>
                 {
                     b.Navigation("OrderModificators");
@@ -437,6 +441,11 @@ namespace delivery.Migrations
                 });
 
             modelBuilder.Entity("delivery.Models.OrderStatus", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("delivery.Models.PaymentMethod", b =>
                 {
                     b.Navigation("Orders");
                 });

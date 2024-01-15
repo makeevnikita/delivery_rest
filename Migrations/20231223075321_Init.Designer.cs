@@ -12,8 +12,8 @@ using delivery.Models;
 namespace delivery.Migrations
 {
     [DbContext(typeof(DeliveryContext))]
-    [Migration("20231210132800_AlterModificatorDropModificatorId")]
-    partial class AlterModificatorDropModificatorId
+    [Migration("20231223075321_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,11 +35,11 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(11)");
 
                     b.HasKey("Id");
 
@@ -56,7 +56,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -100,13 +100,26 @@ namespace delivery.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("varchar(400)");
+
                     b.Property<int>("CustomerId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("DateTimeCreation")
+                        .HasColumnType("timestamp");
+
+                    b.Property<DateTime>("DeliveryDate")
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("DeliveryMethodId")
                         .HasColumnType("integer");
 
                     b.Property<int>("PaymentMethodId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -117,7 +130,46 @@ namespace delivery.Migrations
 
                     b.HasIndex("PaymentMethodId");
 
+                    b.HasIndex("StatusId");
+
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("delivery.Models.OrderDelivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Apartment")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Entrance")
+                        .HasColumnType("text");
+
+                    b.Property<string>("House")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderInfoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderInfoId")
+                        .IsUnique();
+
+                    b.ToTable("OrderDeliveries");
                 });
 
             modelBuilder.Entity("delivery.Models.OrderItem", b =>
@@ -127,9 +179,6 @@ namespace delivery.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
@@ -166,7 +215,24 @@ namespace delivery.Migrations
 
                     b.HasIndex("OrderItemId");
 
-                    b.ToTable("OrderModificator");
+                    b.ToTable("OrderModificators");
+                });
+
+            modelBuilder.Entity("delivery.Models.OrderStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderStatus");
                 });
 
             modelBuilder.Entity("delivery.Models.PaymentMethod", b =>
@@ -179,7 +245,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -194,7 +260,7 @@ namespace delivery.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -210,10 +276,10 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric(6,2)");
 
                     b.HasKey("Id");
 
@@ -236,7 +302,7 @@ namespace delivery.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -257,20 +323,26 @@ namespace delivery.Migrations
             modelBuilder.Entity("delivery.Models.Order", b =>
                 {
                     b.HasOne("delivery.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("delivery.Models.DeliveryMethod", "DeliveryMethod")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("DeliveryMethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("delivery.Models.PaymentMethod", "PaymentMethod")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("delivery.Models.OrderStatus", "Status")
+                        .WithMany("Orders")
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -279,6 +351,19 @@ namespace delivery.Migrations
                     b.Navigation("DeliveryMethod");
 
                     b.Navigation("PaymentMethod");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("delivery.Models.OrderDelivery", b =>
+                {
+                    b.HasOne("delivery.Models.Order", "OrderInfo")
+                        .WithOne("OrderDelivery")
+                        .HasForeignKey("delivery.Models.OrderDelivery", "OrderInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderInfo");
                 });
 
             modelBuilder.Entity("delivery.Models.OrderItem", b =>
@@ -323,9 +408,21 @@ namespace delivery.Migrations
                 {
                     b.HasOne("delivery.Models.ProductCategory", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("delivery.Models.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("delivery.Models.DeliveryMethod", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("delivery.Models.Modificator", b =>
@@ -335,12 +432,25 @@ namespace delivery.Migrations
 
             modelBuilder.Entity("delivery.Models.Order", b =>
                 {
+                    b.Navigation("OrderDelivery")
+                        .IsRequired();
+
                     b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("delivery.Models.OrderItem", b =>
                 {
                     b.Navigation("Modificators");
+                });
+
+            modelBuilder.Entity("delivery.Models.OrderStatus", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("delivery.Models.PaymentMethod", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("delivery.Models.Product", b =>

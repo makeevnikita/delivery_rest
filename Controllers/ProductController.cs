@@ -56,7 +56,9 @@ public class ProductController : ControllerBase
 
         if (productDto == null)
         {
-            return NotFound(new { result = "NotFound"} );
+            string message = $"Product with id = {id} not found";
+            _logger.LogError(message);
+            return NotFound(new { result = "NotFound", description = message } );
         }
 
         return new JsonResult(productDto, serializerOptions);
@@ -101,15 +103,29 @@ public class ProductController : ControllerBase
         
         ProductList productList = new ProductList();
 
-        productList.Products = await filterQuery
-                    .Select(product => new ProductDto {
-                        Name = product.Name,
-                        ImagePath = product.ImagePath,
-                        Price = product.Price,
-                        Url = Url.Link("GetById", new { controller = "product", action = "get", id = product.Id })
-                    }).Skip((productDto.Page - 1) * pageSize).Take(pageSize).ToListAsync();
-        productList.TotalCount = await filterQuery.CountAsync();
-        productList.PageSize = pageSize;
+        try
+        {
+            productList.Products = await filterQuery
+                .Select(product => new ProductDto {
+                    Name = product.Name,
+                    ImagePath = product.ImagePath,
+                    Price = product.Price,
+                    Url = Url.Link("GetById", new { controller = "product", action = "get", id = product.Id })
+                })
+                .Skip((productDto.Page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            productList.TotalCount = await filterQuery.CountAsync();
+            productList.PageSize = pageSize;
+        }
+        catch
+        {
+            string message = "an error occurred while searching for products" +
+                             $"filter params {productDto}";
+            _logger.LogError(message);
+            return NotFound(new { result = "NotFound", description = message } );
+        }
 
         return new JsonResult(productList, serializerOptions);
     }
@@ -126,15 +142,20 @@ public class ProductController : ControllerBase
         try
         {
             await _context.SaveChangesAsync();
+
+            return new JsonResult(new { result = "success" });
         }
         catch
         {
-            return new JsonResult(new { 
-                result = "error", 
-                description = "Ошибка при удалении товара или товара не существует" });   
-        }
+            string message = $"An error occurred during the deletion of the product id = {id} or the product does not exist";
 
-        return new JsonResult(new { result = "success" });
+            _logger.LogError(message);
+            return new JsonResult(new { 
+                    result = "error", 
+                    description = message 
+                }
+            );   
+        }
     }
 
     // [Authorize(Roles = "Admin")]
@@ -179,7 +200,14 @@ public class ProductController : ControllerBase
         }
         catch
         {
-            return new JsonResult(new { result = "error", description = "Не удалось обновить товар" });
+            string message = "failed to update the product";
+            _logger.LogError(message);
+
+            return new JsonResult(new {
+                    result = "error",
+                    description = message 
+                }
+            );
         }
         finally
         {
@@ -240,7 +268,14 @@ public class ProductController : ControllerBase
         }
         catch
         {
-            return Created(Url.RouteUrl("GetProductById", new {id = newProduct.Id}), new { result = "success" });
+            string message = "failed to create the product";
+            _logger.LogError(message);
+            
+            return new JsonResult(new {
+                    result = "error",
+                    description = message 
+                }
+            );
         }
         finally
         {

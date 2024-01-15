@@ -41,12 +41,14 @@ namespace delivery
 
             services.Configure<FormOptions>(options =>
             {
-                options.ValueLengthLimit = 50; //default 1024
-                options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
+                // options.ValueLengthLimit = 50; //default 1024
+                // options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
             });
             string connectionString = Configuration.GetConnectionString("PostgresConnection");
 
             services.AddDbContext<DeliveryContext>(options =>
+                options.UseNpgsql(connectionString));
+            services.AddDbContext<UserContext>(options =>
                 options.UseNpgsql(connectionString));
                 
             services.AddControllers();
@@ -82,6 +84,14 @@ namespace delivery
                 endpoints.MapControllerRoute(
                     name: "GetOrderById",
                     pattern: "manager/order/get/{id}"
+                );
+                endpoints.MapControllerRoute(
+                    name: "GetGroupById",
+                    pattern: "group/get/{id}"
+                );
+                endpoints.MapControllerRoute(
+                    name: "GetUserById",
+                    pattern: "user/get/{id}"
                 );
             });
         }

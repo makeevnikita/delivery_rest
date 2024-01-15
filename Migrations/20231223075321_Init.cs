@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -6,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace delivery.Migrations
 {
     /// <inheritdoc />
-    public partial class InitCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,8 +18,8 @@ namespace delivery.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Phone = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Phone = table.Column<string>(type: "varchar(11)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,11 +32,24 @@ namespace delivery.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeliveryMethods", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderStatus", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,7 +58,7 @@ namespace delivery.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,7 +71,7 @@ namespace delivery.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
                     ImagePath = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -73,7 +87,11 @@ namespace delivery.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CustomerId = table.Column<int>(type: "integer", nullable: false),
                     PaymentMethodId = table.Column<int>(type: "integer", nullable: false),
-                    DeliveryMethodId = table.Column<int>(type: "integer", nullable: false)
+                    DeliveryMethodId = table.Column<int>(type: "integer", nullable: false),
+                    DateTimeCreation = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    DeliveryDate = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    Comment = table.Column<string>(type: "varchar(400)", nullable: false),
+                    StatusId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,6 +109,12 @@ namespace delivery.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Orders_OrderStatus_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "OrderStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Orders_PaymentMethods_PaymentMethodId",
                         column: x => x.PaymentMethodId,
                         principalTable: "PaymentMethods",
@@ -105,11 +129,11 @@ namespace delivery.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(6,2)", nullable: false),
                     ImagePath = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: true)
+                    CategoryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -118,7 +142,32 @@ namespace delivery.Migrations
                         name: "FK_Products_ProductCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "ProductCategories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDeliveries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    City = table.Column<string>(type: "text", nullable: false),
+                    Street = table.Column<string>(type: "text", nullable: false),
+                    House = table.Column<string>(type: "text", nullable: false),
+                    Entrance = table.Column<string>(type: "text", nullable: true),
+                    Apartment = table.Column<string>(type: "text", nullable: true),
+                    OrderInfoId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDeliveries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderDeliveries_Orders_OrderInfoId",
+                        column: x => x.OrderInfoId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,18 +199,11 @@ namespace delivery.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderId = table.Column<int>(type: "integer", nullable: false),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    ModificatorId = table.Column<int>(type: "integer", nullable: true)
+                    ProductId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Modificators_ModificatorId",
-                        column: x => x.ModificatorId,
-                        principalTable: "Modificators",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
@@ -177,7 +219,7 @@ namespace delivery.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderModificator",
+                name: "OrderModificators",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -187,15 +229,15 @@ namespace delivery.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderModificator", x => x.Id);
+                    table.PrimaryKey("PK_OrderModificators", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderModificator_Modificators_ModificatorId",
+                        name: "FK_OrderModificators_Modificators_ModificatorId",
                         column: x => x.ModificatorId,
                         principalTable: "Modificators",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderModificator_OrderItems_OrderItemId",
+                        name: "FK_OrderModificators_OrderItems_OrderItemId",
                         column: x => x.OrderItemId,
                         principalTable: "OrderItems",
                         principalColumn: "Id",
@@ -208,9 +250,10 @@ namespace delivery.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ModificatorId",
-                table: "OrderItems",
-                column: "ModificatorId");
+                name: "IX_OrderDeliveries_OrderInfoId",
+                table: "OrderDeliveries",
+                column: "OrderInfoId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -223,13 +266,13 @@ namespace delivery.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderModificator_ModificatorId",
-                table: "OrderModificator",
+                name: "IX_OrderModificators_ModificatorId",
+                table: "OrderModificators",
                 column: "ModificatorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderModificator_OrderItemId",
-                table: "OrderModificator",
+                name: "IX_OrderModificators_OrderItemId",
+                table: "OrderModificators",
                 column: "OrderItemId");
 
             migrationBuilder.CreateIndex(
@@ -248,6 +291,11 @@ namespace delivery.Migrations
                 column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_StatusId",
+                table: "Orders",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
@@ -257,13 +305,16 @@ namespace delivery.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "OrderModificator");
+                name: "OrderDeliveries");
 
             migrationBuilder.DropTable(
-                name: "OrderItems");
+                name: "OrderModificators");
 
             migrationBuilder.DropTable(
                 name: "Modificators");
+
+            migrationBuilder.DropTable(
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -276,6 +327,9 @@ namespace delivery.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeliveryMethods");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatus");
 
             migrationBuilder.DropTable(
                 name: "PaymentMethods");

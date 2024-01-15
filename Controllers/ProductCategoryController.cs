@@ -14,6 +14,7 @@ namespace delivery.Controllers;
 public class ProductCategoryController : ControllerBase
 {
     private readonly JsonSerializerOptions serializerOptions;
+    
     private DeliveryContext _context;
     
     public ProductCategoryController(DeliveryContext context)
