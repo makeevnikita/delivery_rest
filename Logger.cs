@@ -1,11 +1,14 @@
 public class FileLogger : ILogger, IDisposable
 {
     string filePath;
+
     static object _lock = new object();
+    
     public FileLogger(string path)
     {
         filePath = path;
     }
+
     public IDisposable BeginScope<TState>(TState state)
     {
         return this;
