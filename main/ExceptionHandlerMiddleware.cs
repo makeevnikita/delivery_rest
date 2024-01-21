@@ -45,9 +45,10 @@ public class ExceptionHandlerMiddleware
                 $"StackTrace: {exception.StackTrace}\n");
 
             context.Response.ContentType = "application/json";
+            Console.WriteLine($"{exception.Message} {exception.StackTrace}");
             
             string result = JsonSerializer.Serialize(
-                new { result = "Internal Error",
+                new { result = $"{exception.Message} {exception.StackTrace}",
                       status = HttpStatusCode.InternalServerError
                     }
                 );

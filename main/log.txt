@@ -9304,3 +9304,141 @@ Now listening on: http://localhost:5006
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: /home/superuser/Рабочий стол/delivery
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Executed DbCommand (127ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT p."Id", p."Name", p."Price", p."ImagePath", p."Description", p."IsActive", p0."Name" AS "CategoryName"
+FROM "Products" AS p
+INNER JOIN "ProductCategories" AS p0 ON p."CategoryId" = p0."Id"
+WHERE p."Id" = @__id_0
+LIMIT 1
+Product with id = 26 not found
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/get/26
+Execution speed: stopWatch7ElapsedMilliseconds
+The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+Executed DbCommand (4ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT p."Name", p."ImagePath", p."Price", p."Id"
+FROM "Products" AS p
+LIMIT @__p_1 OFFSET @__p_0
+Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Products" AS p
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/get
+Execution speed: stopWatchElapsedMilliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/create
+Execution speed: stopWatchElapsedMilliseconds
+Executed DbCommand (4ms) [Parameters=[@__p_1='?' (DbType = Int32), @__p_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT p."Name", p."ImagePath", p."Price", p."Id"
+FROM "Products" AS p
+LIMIT @__p_1 OFFSET @__p_0
+Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT count(*)::int
+FROM "Products" AS p
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/get
+Execution speed: stopWatchElapsedMilliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/create
+Execution speed: stopWatchElapsedMilliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Failed executing DbCommand (111ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?', @p2='?', @p3='?' (DbType = Boolean), @p4='?', @p5='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+INSERT INTO "Products" ("CategoryId", "Description", "ImagePath", "IsActive", "Name", "Price")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5)
+RETURNING "Id";
+An exception occurred in the database while saving changes for context type 'delivery.Models.DeliveryContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "Products" violates foreign key constraint "FK_Products_ProductCategories_CategoryId"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessage>g__ReadMessageLong|222_0(NpgsqlConnector connector, Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(CommandBehavior behavior, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(CommandBehavior behavior, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "Products" violates foreign key constraint "FK_Products_ProductCategories_CategoryId"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: Products
+    ConstraintName: FK_Products_ProductCategories_CategoryId
+    File: ri_triggers.c
+    Line: 2528
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+failed to create the product
+An error occurred while saving the entity changes. See the inner exception for details.
+   at delivery.Repositories.ProductRepository.Create(Boolean IsActive, String name, Decimal price, String filePath, String description, Int32 categoryId) in /home/superuser/Рабочий стол/delivery/main/Repositories/Implementations/ProductRepisitory.cs:line 159
+   at delivery.Controllers.ProductController.CreateAsync(CreateProductDto productDto) in /home/superuser/Рабочий стол/delivery/main/Controllers/ProductController.cs:line 181
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/create
+Execution speed: stopWatch5ElapsedMilliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /admin
+Execution speed: stopWatchElapsedMilliseconds
+Class: delivery.ExceptionHandlerMiddleware
+Path: /pgadmin
+Execution speed: stopWatchElapsedMilliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Executed DbCommand (93ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?', @p2='?', @p3='?' (DbType = Boolean), @p4='?', @p5='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+INSERT INTO "Products" ("CategoryId", "Description", "ImagePath", "IsActive", "Name", "Price")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5)
+RETURNING "Id";
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/create
+Execution speed: stopWatch5ElapsedMilliseconds
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Application is shutting down...
+Now listening on: http://localhost:5006
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: /home/superuser/Рабочий стол/delivery/main
+Executed DbCommand (113ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?', @p2='?', @p3='?' (DbType = Boolean), @p4='?', @p5='?' (DbType = Decimal)], CommandType='Text', CommandTimeout='30']
+INSERT INTO "Products" ("CategoryId", "Description", "ImagePath", "IsActive", "Name", "Price")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5)
+RETURNING "Id";
+Class: delivery.ExceptionHandlerMiddleware
+Path: /product/create
+Execution speed: stopWatch6ElapsedMilliseconds
+Application is shutting down...

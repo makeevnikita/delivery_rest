@@ -19,11 +19,12 @@ public class ProductDto
 
     public decimal Price { get; set; }//
 
-    public string Url { get; set; }//
+    public int Id { get; set; }//
 }
 
 public class UpdateProductDto
 {
+    public int Id { get; set; }
     [Required(ErrorMessage = "IsActive cannot be null")]
     public bool IsActive { get; set; }
 

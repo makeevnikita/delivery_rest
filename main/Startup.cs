@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using delivery.Helpers;
-
+using delivery.Repositories;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 
 namespace delivery
@@ -20,6 +21,8 @@ namespace delivery
 
         public void ConfigureServices(IServiceCollection services)
         {   
+            services.AddTransient<IProductRepository, ProductRepository>();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -41,9 +44,20 @@ namespace delivery
 
             services.Configure<FormOptions>(options =>
             {
-                // options.ValueLengthLimit = 50; //default 1024
-                // options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
+                options.ValueLengthLimit = 50 * 1024 * 1024; //default 1024
+                options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
             });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 50 * 1024 * 1024;;
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 50 * 1024 * 1024;;
+            });
+
             string connectionString = Configuration.GetConnectionString("PostgresConnection");
 
             services.AddDbContext<DeliveryContext>(options =>
@@ -94,6 +108,8 @@ namespace delivery
                     pattern: "user/get/{id}"
                 );
             });
+
+            app.UseMiddleware<AbpRequestSizeLimitMiddleware>();
         }
     }
 }
