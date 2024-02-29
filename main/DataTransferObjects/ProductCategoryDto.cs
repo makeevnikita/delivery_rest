@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace delivery.DataTransferObjects;
 
-public class ProductCategoryDto
+public class ProductCategoryDetail
 {
     public string Name { get; set; }
 
@@ -10,6 +10,14 @@ public class ProductCategoryDto
 
     public string Url { get; set; }
 }
+
+public class ProductCategoryDto
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+}
+
 
 public class UpdateProductCategoryDto
 {
@@ -51,5 +59,5 @@ public class CategoriesList
 
     public int PageSize { get; set; }
 
-    public List<ProductCategoryDto> Categories { get; set; }
+    public List<ProductCategoryDetail> Categories { get; set; }
 }

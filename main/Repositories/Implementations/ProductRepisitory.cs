@@ -35,7 +35,7 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task<ProductList> GetPaginatedAndFiltered(
-        int page, string name = null, decimal? minPrice = null, decimal? maxPrice = null,
+        int page = 1, string name = null, decimal? minPrice = null, decimal? maxPrice = null,
         int? categoryId = null, bool sortByPrice = false, bool sortByPriceDesc = false
     )
     {
@@ -116,17 +116,36 @@ public class ProductRepository : IProductRepository
 
     public async Task Update(
         int productId,
-        bool IsActive,
+        bool isActive,
         string name,
         decimal price,
-        string filePath,
-        string Description,
+        string imagePath,
+        string description,
         int categoryId
     )
     {
-        Product product = new Product { Id = productId, CategoryId = categoryId };
+        Product product = new Product
+        { 
+            Id = productId,
+            Name = name,
+            CategoryId = categoryId,
+            IsActive = isActive,
+            Price = price,
+            Description = description,
+            ImagePath = imagePath
+        };
 
+        _deliveryContext.Products.Attach(product);
+        _deliveryContext.Products.Update(product);
 
+        try
+        {
+            _deliveryContext.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public async Task<int> Create(

@@ -55,7 +55,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("get")]
-    public async Task<IActionResult> FilterProducts([FromQuery] ProductFilterDto productDto)
+    public async Task<IActionResult> Get([FromQuery] ProductFilterDto productDto)
     {        
         try
         {
@@ -105,19 +105,10 @@ public class ProductController : ControllerBase
         }
     }
 
-    // [Authorize(Roles = "Admin")]
     [HttpPut("update/{id}")]
     public async Task<IActionResult> Update([FromForm] UpdateProductDto productDto)
     {   
-        string oldImage = await _productRepository.GetProductImage(productDto.Id);
-
-        string fileName = oldImage;
-
-        if (oldImage.Substring(0, 35) != productDto.Image.FileName)
-        {  
-            Guid guid = Guid.NewGuid();
-            fileName = $"{guid}{productDto.Image.FileName}";
-        }
+        (string fileName, bool imagePathUpdated) = await CheckIfImagePathUpdated(productDto.Id, productDto.Image.FileName);
 
         try
         {
@@ -133,10 +124,10 @@ public class ProductController : ControllerBase
 
             return new JsonResult(new { result = "success", description = "Товар успешно обновлён" });
         }
-        catch
+        catch (Exception ex)
         {
             string message = "failed to update the product";
-            _logger.LogError(message);
+            _logger.LogError("failed to update the product\n" + ex);
 
             return new JsonResult(new {
                     result = "error",
@@ -146,7 +137,7 @@ public class ProductController : ControllerBase
         }
         finally
         {
-            if (oldImage != fileName)
+            if (imagePathUpdated)
             {
                 FileHelper helper = new FileHelper();
 
@@ -162,24 +153,10 @@ public class ProductController : ControllerBase
             }
         }
     }
-
-    // [Authorize(Roles = "Admin")]
+    
     [HttpPost("create")]
-    [AbpRequestSizeLimitAttribute(50 * 1024 * 1024)]
     public async Task<IActionResult> CreateAsync([FromForm] CreateProductDto productDto)
     {   
-        Console.WriteLine(HttpContext.Request.ContentLength);
-        Console.WriteLine(HttpContext.Request.ContentType);
-        Console.WriteLine(HttpContext.Request.Form);
-        foreach (var data in HttpContext.Request.Form)
-        {
-            Console.WriteLine(data);
-        }
-        foreach (var data in HttpContext.Request.Headers)
-        {
-            Console.WriteLine($"{data.Key} {data.Value}");
-        }
-
         Guid guid = Guid.NewGuid();
         string fileName = $"{guid}{productDto.Image.FileName}";
         string filePath = Path.Combine(
@@ -222,5 +199,27 @@ public class ProductController : ControllerBase
                 fileName
             );
         }
+    }
+
+    private async Task<(string, bool)> CheckIfImagePathUpdated(int productId, string imagePath)
+    {
+        /*
+            Если imagePath отличается от imagePath, который хранится в базе данных,
+            то возвращаем новый imagePath. Иначе возвращаем imagePath, который находится в БД
+        */
+
+        string oldImage = await _productRepository.GetProductImage(productId);
+        string fileName = oldImage;
+        bool imagePathUpdated = false;
+
+        if (oldImage.Substring(0, 35) != imagePath)
+        {  
+            Guid guid = Guid.NewGuid();
+            fileName = $"{guid}{imagePath}";
+
+            imagePathUpdated = true;
+        }
+
+        return (fileName, imagePathUpdated);
     }
 }
